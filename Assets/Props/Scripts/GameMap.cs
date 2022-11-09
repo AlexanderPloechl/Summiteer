@@ -213,6 +213,8 @@ public class GameMap : MonoBehaviour
     // logic behind moving a player
     public IEnumerator movePlayer(GameObject Player)
     {
+
+
         Debug.Log("Coroutine movePlayer started");
         // get the selected player's current position
         Position = Player.GetComponent<PlayerInfo>().position;
@@ -228,6 +230,7 @@ public class GameMap : MonoBehaviour
         // loop through player moves according to dice value since player moves automatically
         for (int NumberOfMoves = 0; NumberOfMoves < DiceValue; NumberOfMoves++)
         {
+            FindObjectOfType<Audiomanager>().Play("Jump");
             Debug.Log("Remaining moves: " + (DiceValue - NumberOfMoves));
             foreach(GameObject field in Fields)
             {
