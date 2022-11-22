@@ -18,11 +18,11 @@ public class LoadScene_Minigame : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        x+=1;
-        if(x>=300){
-            LoadMainScene();
-        }
-    }
+    //void Update()
+    //{
+    //    x+=1;
+    //    if(x>=300){
+    //        LoadMainScene();
+    //    }
+    //}
 }

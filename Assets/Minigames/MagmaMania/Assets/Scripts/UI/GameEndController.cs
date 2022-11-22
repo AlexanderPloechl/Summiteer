@@ -29,7 +29,8 @@ public class GameEndController : MonoBehaviour
 
         startPressedEvent.Add((args) =>
         {
-            if (gameEnded) RestartGame();
+            //if (gameEnded) RestartGame();
+            if(gameEnded) MainGameManager.Instance.UpdateGameState(GameState.MainGame);
         });
 
         gameObject.SetActive(false);

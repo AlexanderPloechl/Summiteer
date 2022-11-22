@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using UnityEditor.Timeline.Actions;
 using UnityEngine;
+using UnityEngine.LowLevel;
 using UnityEngine.UIElements;
 using Object = System.Object;
 using Random = UnityEngine.Random;
@@ -38,10 +40,33 @@ public class GameMap : MonoBehaviour
     public GameObject Trophy;
     public GameObject itemPanel; // item menu UI panel, this is opened and closed when on item store field
     public LoadScene SceneLoader;
+    public GameData gameData;
+    private void Awake()
+    {
+        MainGameManager.OnGameStateChanged += MainGameManager_OnGameStateChanged;
+        //Debug.Log("game loaded");
+        //gameData = DataPersistenceManager.instance.LoadMainGameData();
+        //InstanciateGame();
+    }
+
+
+
+    private void OnDestroy()
+    {
+        MainGameManager.OnGameStateChanged -= MainGameManager_OnGameStateChanged;
+    }
+
+    private void MainGameManager_OnGameStateChanged(GameState state)
+    {
+        Debug.Log("not implemented");
+        throw new NotImplementedException();
+
+    }
 
     void Start()
     {
         Debug.Log("game loaded");
+        gameData = DataPersistenceManager.instance.LoadMainGameData();
         InstanciateGame();
     }
 
@@ -391,6 +416,22 @@ public class GameMap : MonoBehaviour
             }
 
             Player.GetComponent<PlayerInfo>().position = Position;
+            if (Player.GetComponent<PlayerInfo>().name == "Yellow")
+            {
+                gameData.YellowPosition = Position;
+            }
+            else if (Player.GetComponent<PlayerInfo>().name == "Red")
+            {
+                gameData.RedPosition = Position;
+            }
+            else if (Player.GetComponent<PlayerInfo>().name == "Blue" )
+            {
+                gameData.BluePosition = Position;
+            }
+            else if (Player.GetComponent<PlayerInfo>().name == "White" )
+            {
+                gameData.WhitePosition = Position;
+            }
             DirectionSelected = false;
             //interact with fields during the turn
             if (Fields[Position].GetComponent<IField>().FieldType == FieldTypeEnum.BaseField)
@@ -428,7 +469,9 @@ public class GameMap : MonoBehaviour
         //}
         if (isPlaying == (PlayersList.Count - 1))
         {
-            SceneLoader.LoadRandomScene();
+            //SceneLoader.LoadRandomScene();
+            DataPersistenceManager.instance.SaveMainGameData(gameData);
+            MainGameManager.Instance.UpdateGameState(GameState.MiniGame);
             isPlaying = 0;
         }
         else
@@ -456,7 +499,33 @@ public class GameMap : MonoBehaviour
         //Players[1] = GameObject.Find("Blue");
         //Players[2] = GameObject.Find("Red");
         //Players[3] = GameObject.Find("White");
-        SelectPlayersCharacters();
+        if (gameData.isFirstRound)
+        {
+            SelectPlayersCharacters();
+        }
+        else
+        {
+            foreach(GameObject player in PlayersList)
+            {
+                if(player.name == "Yellow")
+                {
+                    player.GetComponent<PlayerInfo>().position = gameData.YellowPosition;
+                }
+                else if(player.name == "Red")
+                {
+                    player.GetComponent<PlayerInfo>().position = gameData.RedPosition;
+                }
+                else if (player.name == "Blue")
+                {
+                    player.GetComponent<PlayerInfo>().position = gameData.BluePosition;
+                }
+                else if (player.name == "White")
+                {
+                    player.GetComponent<PlayerInfo>().position = gameData.WhitePosition;
+                }
+            }
+        }
+        
 
         // instanciate map fields
         for (int i = 0; i < Config.numberofFields; i++)
@@ -531,11 +600,19 @@ public class GameMap : MonoBehaviour
 
     void PlaceTrophy()
     {
-        int rnd = Random.Range(0, BaseFields.Length);
-        BaseFields[rnd].GetComponent<BaseField>().IsTrophyField = true;
-        Debug.Log("Trophy " + BaseFields[rnd].name);
+        if (gameData.trophyPosition == -1)
+        {
+            int rnd = Random.Range(0, BaseFields.Length);
+            BaseFields[rnd].GetComponent<BaseField>().IsTrophyField = true;
+            Debug.Log("Trophy " + BaseFields[rnd].name);
 
-        Trophy.transform.position = BaseFields[rnd].transform.position;
+            Trophy.transform.position = BaseFields[rnd].transform.position;
+            gameData.trophyPosition = rnd;
+        }
+        else
+        {
+            Trophy.transform.position = BaseFields[gameData.trophyPosition].transform.position;
+        }
     }
 
     void SelectPlayersCharacters()
