@@ -18,7 +18,8 @@ public class GameEndController : MonoBehaviour
 
     public void RestartGame()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
+        MainGameManager.Instance.UpdateGameState(GameState.MainGame);
+        //SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
     }
 
     private void Start()
@@ -29,8 +30,8 @@ public class GameEndController : MonoBehaviour
 
         startPressedEvent.Add((args) =>
         {
-            //if (gameEnded) RestartGame();
-            if(gameEnded) MainGameManager.Instance.UpdateGameState(GameState.MainGame);
+            if (gameEnded) RestartGame();
+            //if(gameEnded) MainGameManager.Instance.UpdateGameState(GameState.MainGame);
         });
 
         gameObject.SetActive(false);

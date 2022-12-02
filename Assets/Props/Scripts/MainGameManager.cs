@@ -10,13 +10,9 @@ public class MainGameManager : MonoBehaviour
     private static MainGameManager instance;
     public GameState gameState;
     public static event Action<GameState> OnGameStateChanged;
+    private SaveStateHandler saveStateHandler;
+    public GameData gameData;
 
-    //private MainGameMananger()
-    //{
-    //    // initialize your game manager here. Do not reference to GameObjects here (i.e. GameObject.Find etc.)
-    //    // because the game manager will be created before the objects
-        
-    //}
 
     public static MainGameManager Instance
     {
@@ -25,6 +21,8 @@ public class MainGameManager : MonoBehaviour
             if (instance == null)
             {
                 instance = new MainGameManager();
+                instance.gameData = new GameData();
+                instance.saveStateHandler = new SaveStateHandler();
             }
 
             return instance;
@@ -33,12 +31,13 @@ public class MainGameManager : MonoBehaviour
 
     //private void Awake()
     //{
-    //    Instance = this;
+    //    //Instance = this;
+    //    Instance.gameData = new GameData();
     //}
     // Start is called before the first frame update
     void Start()
     {
-        UpdateGameState(GameState.MainGame);
+        UpdateGameState(GameState.MainGame); 
     }
 
     // Update is called once per frame
@@ -48,10 +47,12 @@ public class MainGameManager : MonoBehaviour
         switch (newState)
         {
             case GameState.MainGame:
-                SwitchScene();
+                saveStateHandler.LoadDataFromJson();
+                SwitchToMainGame();
                 break;
             case GameState.MiniGame:
-                SwitchScene();
+                saveStateHandler.SaveDataToJson(instance.gameData);
+                SwitchToMiniGame();
                 break;
             //case GameState.CharacterSelection:
             //    break;
@@ -63,18 +64,17 @@ public class MainGameManager : MonoBehaviour
         OnGameStateChanged?.Invoke(newState);
     }
 
-    private void SwitchScene()
+
+    private void SwitchToMiniGame() 
     {
-        if (gameState.Equals(GameState.MiniGame))
-        {
-            int sceneNumber = Random.Range(1, SceneManager.sceneCountInBuildSettings);
-            SceneManager.LoadScene(sceneNumber);
-        }
-        else if (gameState.Equals(GameState.MainGame))
-        {
-            Debug.Log("test (we back?)");
-            SceneManager.LoadScene(0);
-        }
+        int sceneNumber = Random.Range(1, SceneManager.sceneCountInBuildSettings);
+        SceneManager.LoadScene(sceneNumber);
+        //SceneManager.LoadScene(2);
+    }
+    private void SwitchToMainGame() 
+    {
+        Debug.Log("test (we back?)");
+        SceneManager.LoadScene(0);
     }
 
 }
