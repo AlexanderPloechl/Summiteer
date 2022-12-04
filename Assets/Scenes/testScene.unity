@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 1481.7754, g: 1835.8867, b: 2430.4492, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -145,7 +145,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 479e2b73d1e0e0b4ba08dcb10c0f9b8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  card: {fileID: 11400000, guid: 82f90ce5f42886146a2254e56171bf09, type: 2}
+  card: {fileID: 11400000, guid: 637bbfadd180af442b5147c2a3961d83, type: 2}
   cardText: {fileID: 1102527889}
   cost: {fileID: 1354049049}
   rarity: {fileID: 444891924}
