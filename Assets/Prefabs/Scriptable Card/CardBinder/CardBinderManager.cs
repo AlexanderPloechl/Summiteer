@@ -6,7 +6,7 @@ public class CardBinderManager : MonoBehaviour
 {
 
     public GameObject[] cardDisplays= new GameObject[3];
-    public Card [] cards= {};
+    public List<Card> cards= new List<Card>();
 
     // Update is called once per frame
     void Start()
@@ -17,10 +17,26 @@ public class CardBinderManager : MonoBehaviour
         rearrangeCards();
     }
 
+    public void addCard(Card card){
+        if(cards.Count<3){
+            cards.Add(card);
+        }
+    }
+
+    public void removeCard(Card card){
+        
+        
+    }
+    public void removeCardAt(int i){
+        if(cards.Count>0){
+            cards.RemoveAt(i);
+        }
+    }
+
     void rearrangeCards(){
-        if(cards.Length>0 && cards.Length<4){
+        if(cards.Count>0 && cards.Count<4){
             int i=0;
-            for(; i<cards.Length; i++){
+            for(; i<cards.Count; i++){
                 cardDisplays[i].GetComponent<CardDisplay>().setCard(cards[i]);
                 cardDisplays[i].SetActive(true);
             }
@@ -35,14 +51,14 @@ public class CardBinderManager : MonoBehaviour
     }
 
     void setCardPositions(){
-        if(cards.Length==1){
+        if(cards.Count==1){
             cardDisplays[0].transform.localPosition= new Vector3(0,0,0);
         }
-        if(cards.Length==2){
+        if(cards.Count==2){
             cardDisplays[0].transform.localPosition= new Vector3(-200,0,0);
             cardDisplays[1].transform.localPosition= new Vector3(200,0,0);
         }
-        if(cards.Length==3){
+        if(cards.Count==3){
             cardDisplays[0].transform.localPosition= new Vector3(-330,0,0);
             cardDisplays[1].transform.localPosition= new Vector3(0,0,0);
             cardDisplays[2].transform.localPosition= new Vector3(330,0,0);
