@@ -11,8 +11,19 @@ public class CardDisplay : MonoBehaviour
     public Image artworkImage;
 
     // Start is called before the first frame update
-    void Start()
+    public void setCard(Card newCard)
     {
+        card= newCard;
+        updateCard();
+        
+    }
+
+    void Start(){
+        if(card!=null){
+            updateCard();
+        }
+    }
+    void updateCard(){
         cardText.text= card.cardText;
         cost.text= card.cost.ToString();
         rarity.text= card.rarity;
