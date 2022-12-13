@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Minigames/MagmaMania/Assets/Scenes/Prototype.unity
     guid: 1cbd4761b0c405c42aa6ddc77d071f48
+  - enabled: 0
+    path: Assets/Minigames/TestMinigame/TestScene.unity
+    guid: 9db60df5ff5554e4796310a868ff451d
   m_configObjects: {}
