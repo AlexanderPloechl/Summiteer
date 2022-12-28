@@ -40,13 +40,14 @@ public class GameMap : MonoBehaviour
     public GameObject Trophy;
     public GameObject itemPanel; // item menu UI panel, this is opened and closed when on item store field
     public LoadScene SceneLoader;
-    //public GameData gameData;
+    public GameData gameData;
     private void Awake()
     {
         MainGameManager.OnGameStateChanged += MainGameManager_OnGameStateChanged;
         //Debug.Log("game loaded");
         //gameData = DataPersistenceManager.instance.LoadMainGameData();
         //InstanciateGame();
+        gameData = SaveStateHandler.LoadDataFromJson();
     }
 
 
@@ -58,14 +59,26 @@ public class GameMap : MonoBehaviour
 
     private void MainGameManager_OnGameStateChanged(GameState state)
     {
-        Debug.Log("not implemented");
+        Debug.Log("GameMap gamestate changed");
+        if(state == GameState.MiniGame)
+        {
+            SaveStateHandler.SaveDataToJson(gameData);
+        }
+        else if (state == GameState.GameEnded)
+        {
+            SaveStateHandler.ResetSaveState();
+        }
+        else if( state == GameState.MainGame)
+        {
+            Debug.Log("game loaded");
+            InstanciateGame();
+        }
     }
 
     void Start()
     {
-        Debug.Log("game loaded");
-        //gameData = DataPersistenceManager.instance.LoadMainGameData();
-        InstanciateGame();
+        //Debug.Log("game loaded");
+        //InstanciateGame();
     }
 
     void Update()
@@ -414,21 +427,37 @@ public class GameMap : MonoBehaviour
             }
 
             Player.GetComponent<PlayerInfo>().position = Position;
+            //if (Player.GetComponent<PlayerInfo>().name == "Yellow")
+            //{
+            //    MainGameManager.Instance.gameData.YellowPosition = Position;
+            //}
+            //else if (Player.GetComponent<PlayerInfo>().name == "Red")
+            //{
+            //    MainGameManager.Instance.gameData.RedPosition = Position;
+            //}
+            //else if (Player.GetComponent<PlayerInfo>().name == "Blue" )
+            //{
+            //    MainGameManager.Instance.gameData.BluePosition = Position;
+            //}
+            //else if (Player.GetComponent<PlayerInfo>().name == "White" )
+            //{
+            //    MainGameManager.Instance.gameData.WhitePosition = Position;
+            //}
             if (Player.GetComponent<PlayerInfo>().name == "Yellow")
             {
-                MainGameManager.Instance.gameData.YellowPosition = Position;
+                gameData.YellowPosition = Position;
             }
             else if (Player.GetComponent<PlayerInfo>().name == "Red")
             {
-                MainGameManager.Instance.gameData.RedPosition = Position;
+                gameData.RedPosition = Position;
             }
-            else if (Player.GetComponent<PlayerInfo>().name == "Blue" )
+            else if (Player.GetComponent<PlayerInfo>().name == "Blue")
             {
-                MainGameManager.Instance.gameData.BluePosition = Position;
+                gameData.BluePosition = Position;
             }
-            else if (Player.GetComponent<PlayerInfo>().name == "White" )
+            else if (Player.GetComponent<PlayerInfo>().name == "White")
             {
-                MainGameManager.Instance.gameData.WhitePosition = Position;
+                gameData.WhitePosition = Position;
             }
             DirectionSelected = false;
             //interact with fields during the turn
@@ -497,9 +526,37 @@ public class GameMap : MonoBehaviour
         //Players[1] = GameObject.Find("Blue");
         //Players[2] = GameObject.Find("Red");
         //Players[3] = GameObject.Find("White");
-        if (MainGameManager.Instance.gameData.isFirstRound)
+        //if (MainGameManager.Instance.gameData.isFirstRound)
+        //{
+        //    SelectPlayersCharacters();
+        //}
+        //else
+        //{
+        //    foreach (GameObject player in PlayersList)
+        //    {
+        //        if (player.name == "Yellow")
+        //        {
+        //            player.GetComponent<PlayerInfo>().position = MainGameManager.Instance.gameData.YellowPosition;
+        //        }
+        //        else if (player.name == "Red")
+        //        {
+        //            player.GetComponent<PlayerInfo>().position = MainGameManager.Instance.gameData.RedPosition;
+        //        }
+        //        else if (player.name == "Blue")
+        //        {
+        //            player.GetComponent<PlayerInfo>().position = MainGameManager.Instance.gameData.BluePosition;
+        //        }
+        //        else if (player.name == "White")
+        //        {
+        //            player.GetComponent<PlayerInfo>().position = MainGameManager.Instance.gameData.WhitePosition;
+        //        }
+        //    }
+        //}
+        Debug.Log(gameData.isFirstRound+ "change the bool in the json file and restart the game");
+        if (gameData.isFirstRound)
         {
             SelectPlayersCharacters();
+            gameData.isFirstRound = false;
         }
         else
         {
@@ -507,19 +564,19 @@ public class GameMap : MonoBehaviour
             {
                 if(player.name == "Yellow")
                 {
-                    player.GetComponent<PlayerInfo>().position = MainGameManager.Instance.gameData.YellowPosition;
+                    player.GetComponent<PlayerInfo>().position = gameData.YellowPosition;
                 }
                 else if(player.name == "Red")
                 {
-                    player.GetComponent<PlayerInfo>().position = MainGameManager.Instance.gameData.RedPosition;
+                    player.GetComponent<PlayerInfo>().position = gameData.RedPosition;
                 }
                 else if (player.name == "Blue")
                 {
-                    player.GetComponent<PlayerInfo>().position = MainGameManager.Instance.gameData.BluePosition;
+                    player.GetComponent<PlayerInfo>().position = gameData.BluePosition;
                 }
                 else if (player.name == "White")
                 {
-                    player.GetComponent<PlayerInfo>().position = MainGameManager.Instance.gameData.WhitePosition;
+                    player.GetComponent<PlayerInfo>().position = gameData.WhitePosition;
                 }
             }
         }
@@ -598,18 +655,21 @@ public class GameMap : MonoBehaviour
 
     void PlaceTrophy()
     {
-        if (MainGameManager.Instance.gameData.trophyPosition == -1)
+        //if (MainGameManager.Instance.gameData.trophyPosition == -1)
+        if (gameData.trophyPosition == -1)
         {
             int rnd = Random.Range(0, BaseFields.Length);
             BaseFields[rnd].GetComponent<BaseField>().IsTrophyField = true;
             Debug.Log("Trophy " + BaseFields[rnd].name);
 
             Trophy.transform.position = BaseFields[rnd].transform.position;
-            MainGameManager.Instance.gameData.trophyPosition = rnd;
+            //MainGameManager.Instance.gameData.trophyPosition = rnd;
+            gameData.trophyPosition = rnd;
         }
         else
         {
-            Trophy.transform.position = BaseFields[MainGameManager.Instance.gameData.trophyPosition].transform.position;
+            //Trophy.transform.position = BaseFields[MainGameManager.Instance.gameData.trophyPosition].transform.position;
+            Trophy.transform.position = BaseFields[gameData.trophyPosition].transform.position;
         }
     }
 

@@ -7,37 +7,36 @@ using Random = UnityEngine.Random;
 
 public class MainGameManager : MonoBehaviour
 {
-    private static MainGameManager instance;
+    //private static MainGameManager instance;
+    public static MainGameManager Instance;
     public GameState gameState;
     public static event Action<GameState> OnGameStateChanged;
-    private SaveStateHandler saveStateHandler;
-    public GameData gameData;
+    //private static SaveStateHandler saveStateHandler = new SaveStateHandler();
+    //public GameData gameData;
 
 
-    public static MainGameManager Instance
-    {
-        get
-        {
-            if (instance == null)
-            {
-                instance = new MainGameManager();
-                instance.gameData = new GameData();
-                instance.saveStateHandler = new SaveStateHandler();
-            }
-
-            return instance;
-        }
-    }
-
-    //private void Awake()
+    //public static MainGameManager Instance
     //{
-    //    //Instance = this;
-    //    Instance.gameData = new GameData();
+    //    get
+    //    {
+    //        if (instance == null)
+    //        {
+    //            instance = GameObject.Find("GameManager").GetComponent<MainGameManager>();
+    //            Debug.Log("instance was null");
+    //        }
+
+    //        return instance;
+    //    }
     //}
+
+    private void Awake()
+    {
+        Instance = this;
+    }
     // Start is called before the first frame update
     void Start()
     {
-        UpdateGameState(GameState.MainGame); 
+        UpdateGameState(GameState.MainGame);
     }
 
     // Update is called once per frame
@@ -47,17 +46,23 @@ public class MainGameManager : MonoBehaviour
         switch (newState)
         {
             case GameState.MainGame:
-                saveStateHandler.LoadDataFromJson();
+                //saveStateHandler.LoadDataFromJson();
+                Debug.Log("maingame");
                 SwitchToMainGame();
                 break;
             case GameState.MiniGame:
-                saveStateHandler.SaveDataToJson(instance.gameData);
+                //saveStateHandler.SaveDataToJson(instance.gameData);
+                //saveStateHandler.SaveDataToJson(Instance.gameData);
+                Debug.Log("minigame");
                 SwitchToMiniGame();
                 break;
             //case GameState.CharacterSelection:
             //    break;
             //case GameState.Dice:
             //    break;
+            case GameState.GameEnded:
+                SaveStateHandler.ResetSaveState();
+                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(newState), newState, null);
         }
@@ -73,8 +78,12 @@ public class MainGameManager : MonoBehaviour
     }
     private void SwitchToMainGame() 
     {
-        Debug.Log("test (we back?)");
-        SceneManager.LoadScene(0);
+        Debug.Log("switch to main game");
+        //SceneManager.LoadScene(0);
+        if(SceneManager.GetActiveScene().name != SceneManager.GetSceneByBuildIndex(0).name)
+        {
+            SceneManager.LoadScene(0);
+        }
     }
 
 }

@@ -7,5 +7,6 @@ public enum GameState
     MainGame,
     MiniGame,
     CharacterSelection,
-    Dice
+    Dice,
+    GameEnded
 }
