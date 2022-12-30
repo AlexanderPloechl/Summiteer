@@ -15,4 +15,5 @@ public static class Config
      */
     public const int numberofFields = 54;
     public const int numberofBaseFields = 22;
+    public const int numberofRounds = 1;
 }

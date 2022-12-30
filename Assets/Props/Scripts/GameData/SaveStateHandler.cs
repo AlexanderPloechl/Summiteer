@@ -21,21 +21,34 @@ public static class SaveStateHandler
     public static GameData LoadDataFromJson()
     {
         //Debug.Log("Load");
-        string content = File.ReadAllText(Directory.GetCurrentDirectory() + path);
-        Debug.Log("load"+content);
-        //Debug.Log(Directory.GetCurrentDirectory() + path);
-        GameData data = new GameData();
-        JsonUtility.FromJsonOverwrite(content, data);
-        return data;
+        if(!File.Exists(Directory.GetCurrentDirectory() + path))
+        {
+            return null;
+        }
+        else
+        {
+            string content = File.ReadAllText(Directory.GetCurrentDirectory() + path);
+            Debug.Log("load" + content);
+            //Debug.Log(Directory.GetCurrentDirectory() + path);
+            GameData data = new GameData();
+            JsonUtility.FromJsonOverwrite(content, data);
+            return data;
+        }  
     }
 
-    public static void ResetSaveState()
+    //public static void ResetSaveState()
+    //{
+    //    //Debug.Log("Reset");
+    //    string json = JsonUtility.ToJson(new GameData());
+    //    Debug.Log("reset to" + json);
+    //    //Debug.Log(Directory.GetCurrentDirectory() + path);
+    //    File.WriteAllText(Directory.GetCurrentDirectory() + path, json);
+    //}
+
+    public static void DeleteSaveState()
     {
-        //Debug.Log("Reset");
-        string json = JsonUtility.ToJson(new GameData());
-        Debug.Log("reset to" + json);
-        //Debug.Log(Directory.GetCurrentDirectory() + path);
-        File.WriteAllText(Directory.GetCurrentDirectory() + path, json);
+        Debug.Log("Delete");
+        File.Delete(Directory.GetCurrentDirectory() + path);
     }
     
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
@@ -61,7 +62,6 @@ public class MainGameManager : MonoBehaviour
             //case GameState.Dice:
             //    break;
             case GameState.GameEnded:
-                SaveStateHandler.ResetSaveState();
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(newState), newState, null);

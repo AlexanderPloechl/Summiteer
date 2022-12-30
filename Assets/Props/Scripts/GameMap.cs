@@ -48,6 +48,10 @@ public class GameMap : MonoBehaviour
         //gameData = DataPersistenceManager.instance.LoadMainGameData();
         //InstanciateGame();
         gameData = SaveStateHandler.LoadDataFromJson();
+        if(gameData == null)
+        {
+            gameData = new GameData();
+        }
     }
 
 
@@ -62,11 +66,12 @@ public class GameMap : MonoBehaviour
         Debug.Log("GameMap gamestate changed");
         if(state == GameState.MiniGame)
         {
+            gameData.numberOfRounds++;
             SaveStateHandler.SaveDataToJson(gameData);
         }
         else if (state == GameState.GameEnded)
         {
-            SaveStateHandler.ResetSaveState();
+            SaveStateHandler.DeleteSaveState();
         }
         else if( state == GameState.MainGame)
         {
@@ -104,6 +109,7 @@ public class GameMap : MonoBehaviour
                     PlayersList.Add(GameObject.Find("Yellow"));
                     Debug.Log($"Player {PlayersList.Count} chose yellow");
                     Debug.Log("Press \"z\" to add a another character or press \"x\" to start the game.");
+                    gameData.YellowIsPlaying = true;
                     yellowAlreadyChosen = true;
                     addingCharacter = false;
                 }   
@@ -120,6 +126,7 @@ public class GameMap : MonoBehaviour
                     PlayersList.Add(GameObject.Find("Red"));
                     Debug.Log($"Player {PlayersList.Count} chose red");
                     Debug.Log("Press \"z\" to add a another character or press \"x\" to start the game.");
+                    gameData.RedIsPlaying = true;
                     redAlreadyChosen = true;
                     addingCharacter = false;
                 }
@@ -136,6 +143,7 @@ public class GameMap : MonoBehaviour
                     PlayersList.Add(GameObject.Find("White"));
                     Debug.Log($"Player {PlayersList.Count} chose white");
                     Debug.Log("Press \"z\" to add a another character or press \"x\" to start the game.");
+                    gameData.WhiteIsPlaying = true;
                     whiteAlreadyChosen = true;
                     addingCharacter = false;
                 }
@@ -152,6 +160,7 @@ public class GameMap : MonoBehaviour
                     PlayersList.Add(GameObject.Find("Blue"));
                     Debug.Log($"Player {PlayersList.Count} chose blue");
                     Debug.Log("Press \"z\" to add a another character or press \"x\" to start the game.");
+                    gameData.BlueIsPlaying = true;
                     blueAlreadyChosen = true;
                     addingCharacter = false;
                 }
@@ -498,7 +507,14 @@ public class GameMap : MonoBehaviour
         {
             //SceneLoader.LoadRandomScene();
             //DataPersistenceManager.instance.SaveMainGameData(gameData);
-            MainGameManager.Instance.UpdateGameState(GameState.MiniGame);
+            if(gameData.numberOfRounds <= Config.numberofRounds)
+            {
+                MainGameManager.Instance.UpdateGameState(GameState.MiniGame);
+            }
+            else
+            {
+                MainGameManager.Instance.UpdateGameState(GameState.GameEnded);
+            }
             isPlaying = 0;
         }
         else
@@ -552,34 +568,8 @@ public class GameMap : MonoBehaviour
         //        }
         //    }
         //}
-        Debug.Log(gameData.isFirstRound+ "  ||| if false change the bool in the json file and restart the game");
-        if (gameData.isFirstRound)
-        {
-            SelectPlayersCharacters();
-            gameData.isFirstRound = false;
-        }
-        else
-        {
-            foreach(GameObject player in PlayersList)
-            {
-                if(player.name == "Yellow")
-                {
-                    player.GetComponent<PlayerInfo>().position = gameData.YellowPosition;
-                }
-                else if(player.name == "Red")
-                {
-                    player.GetComponent<PlayerInfo>().position = gameData.RedPosition;
-                }
-                else if (player.name == "Blue")
-                {
-                    player.GetComponent<PlayerInfo>().position = gameData.BluePosition;
-                }
-                else if (player.name == "White")
-                {
-                    player.GetComponent<PlayerInfo>().position = gameData.WhitePosition;
-                }
-            }
-        }
+        //Debug.Log(gameData.isFirstRound+ "  ||| if false change the bool in the json file and restart the game");
+        
         
 
         // instanciate map fields
@@ -613,6 +603,43 @@ public class GameMap : MonoBehaviour
         positionAlreadySet = false;
         isShuffled = false;
         isJunction = false;
+
+        if (gameData.isFirstRound)
+        {
+            SelectPlayersCharacters();
+            gameData.isFirstRound = false;
+        }
+        else
+        {
+            foreach (string playerName in gameData.TurnSequence)
+            {
+                PlayersList.Add(GameObject.Find(playerName));
+            }
+            foreach (GameObject player in PlayersList)
+            {
+                if (player.name == "Yellow")
+                {
+                    player.GetComponent<PlayerInfo>().position = gameData.YellowPosition;
+                    player.transform.position = Fields[gameData.YellowPosition].transform.position;
+                }
+                else if (player.name == "Red")
+                {
+                    player.GetComponent<PlayerInfo>().position = gameData.RedPosition;
+                    player.transform.position = Fields[gameData.RedPosition].transform.position;
+                }
+                else if (player.name == "Blue")
+                {
+                    player.GetComponent<PlayerInfo>().position = gameData.BluePosition;
+                    player.transform.position = Fields[gameData.BluePosition].transform.position;
+                }
+                else if (player.name == "White")
+                {
+                    player.GetComponent<PlayerInfo>().position = gameData.WhitePosition;
+                    player.transform.position = Fields[gameData.WhitePosition].transform.position;
+                }
+            }
+        }
+
         //ShufflePlayerArray();
         Trophy = Instantiate(Trophy);
         PlaceTrophy();
@@ -649,6 +676,11 @@ public class GameMap : MonoBehaviour
         for (int i = 0; i < PlayersList.Count; i++)
         {
             Debug.Log($"{i + 1}: {PlayersList[i]}");
+        }
+        foreach(GameObject player in PlayersList)
+        {
+            Debug.Log(player.name);
+            gameData.TurnSequence.Add(player.name);
         }
         isShuffled = true;
     }
