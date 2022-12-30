@@ -20,7 +20,7 @@ public class GameData
         this.RedPosition = -1;
         this.WhitePosition = -1;
         this.isFirstRound = true;
-        Debug.Log("GameData Constructor");
+        //Debug.Log("GameData Constructor");
     }
 
 }

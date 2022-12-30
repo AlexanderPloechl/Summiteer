@@ -552,7 +552,7 @@ public class GameMap : MonoBehaviour
         //        }
         //    }
         //}
-        Debug.Log(gameData.isFirstRound+ "change the bool in the json file and restart the game");
+        Debug.Log(gameData.isFirstRound+ "  ||| if false change the bool in the json file and restart the game");
         if (gameData.isFirstRound)
         {
             SelectPlayersCharacters();
