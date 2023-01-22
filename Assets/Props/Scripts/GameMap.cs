@@ -13,6 +13,7 @@ using Random = UnityEngine.Random;
 public class GameMap : MonoBehaviour
 {
     public GameObject[] Fields = new GameObject[Config.numberofFields];
+    //public Random rnd = new Random();
     public GameObject[] BaseFields = new GameObject[Config.numberofBaseFields];
     //public GameObject[] Players = new GameObject[4]; 
     public List<GameObject> PlayersList; 
@@ -227,7 +228,7 @@ public class GameMap : MonoBehaviour
             if (Input.GetKeyDown("w"))
             {
                 //only allow forward movement in the following cases
-                if (Position == 2 || Position == 10 || Position == 12)
+                if (Position == 2 || Position == 10 || Position == 12 || Position == 5)
                 {
                     forward = true;
                     DirectionSelected = true;
@@ -245,7 +246,7 @@ public class GameMap : MonoBehaviour
             else if (Input.GetKeyDown("d"))
             {
                 //only allow movement to the right in the following cases
-                if (Position == 33)
+                if (Position == 33 || Position == 5)
                 {
                     right = true;
                     DirectionSelected = true;
@@ -293,7 +294,7 @@ public class GameMap : MonoBehaviour
             // player is at a cross road
             else
             {
-                if (Position == 2 || Position == 10 || Position == 12)
+                if (Position == 2 || Position == 10 || Position == 12 || Position == 5)
                 {
                     Debug.Log("Press 'w' to go forward");
                 }
@@ -301,7 +302,7 @@ public class GameMap : MonoBehaviour
                 {
                     Debug.Log("Press 'a' to go left");
                 }
-                if (Position == 33)
+                if (Position == 33 || Position == 5)
                 {
                     Debug.Log("Press 'd' to go right");
                 }
@@ -363,6 +364,20 @@ public class GameMap : MonoBehaviour
                         forward = false;
                     }
                 }
+                else if (Position == 5)
+                {
+                    if (right)
+                    {
+                        Position = Random.Range(5, 31);
+                        right = false;
+                    }
+                    if (forward)
+                    {
+                        Position++;
+                        forward = false;
+                    }
+                }
+
                 positionAlreadySet = true;
             }
  
